@@ -1,6 +1,6 @@
 import express, { Application, Request, Response } from 'express';
 import bodyParser from 'body-parser';
-import { connectToDatabase } from './utils';
+import { connectToDatabase } from './db';
 
 const app: Application = express();
 
