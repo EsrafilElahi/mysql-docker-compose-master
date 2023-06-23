@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  mysql-docker:
+    image: mysql
+    container_name: mysql-docker
+    environment:
+      - MYSQL_ROOT_PASSWORD=any_password
+      - MYSQL_DATABASE=test_db
+    volumes:
+      - express-mysql-data:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    networks:
+      - express-mysql-network
+    restart: on-failure
+
+  adminer:
+    image: adminer
+    container_name: adminer-docker
+    depends_on:
+      - mysql-docker
+    ports:
+      - '8080:8080'
+    networks:
+      - express-mysql-network
+    restart: on-failure
+  
+  express-typescript-docker:
+    depends_on:
+      - mysql-docker
+    environment:
+      - NODE_ENV=development
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./:/app
+    container_name: express-typescript-docker
+    expose:
+      - '3000'
+    ports:
+      - '3000:3000'
+    command: npm run dev
+    networks:
+      - express-mysql-network
+    restart: on-failure
+
+volumes:
+  express-mysql-data:
+
+networks:
+  express-mysql-network:
